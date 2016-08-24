@@ -1,6 +1,5 @@
-learning-threejs
-================
+HACKUst 2016 Team Project
 
-Branch used to update all examples to three.js release r63
+a game for smart phones
 
-Code repository for the examples from the Packt book "Learning Threejs"
+available at ihome.ust.hk/yqiuac/eggoops/program/template.html
