@@ -55,11 +55,22 @@ var action_array = [
     'move_down_bounce'
 ];
 
+var egg_map;
+var ball;
+
+function init_helpers() {
+    egg_map = new EggMap();
+    egg_map.init();
+    ball = new Ball(egg_map);
+    ball.map = egg_map;
+    ball.init();
+}
+
 
 var action_counter = 0;
 function next_action() {
-    var fun = window[action_array[action_counter]];
-    console.log(action_counter + '-->' + action_array[action_counter]);
+    var fun = window['move_' + ball.move()];
+    //console.log(action_counter + '-->' + action_array[action_counter]);
     if (++action_counter >= action_array.length) { action_counter = 1; };
     return fun;
 }
@@ -69,71 +80,68 @@ function next_action() {
 //the current time is a starting-from-zero count by time
 //the size of the MapUnit is unit_size
 
-var move_right = function (time, unit_x, unit_y, total_time, x_size, y_size, rebound) {
+var move_right = function (time, current_x, current_y, total_time, x_size, y_size, rebound) {
 
     // default value
     rebound = typeof rebound !== 'undefined' ? rebound : false;
 
     if (rebound && time > total_time / 2.0) {
-        return move_right(total_time - time, unit_x, unit_y, total_time, x_size, y_size, rebound);
+        return move_right(total_time - time, current_x, current_y, total_time, x_size, y_size, rebound);
     }
-    var current_x = unit_x * x_size + 0.5 * x_size;
-    var current_y = unit_y * y_size + 0.5 * y_size;
 
     current_x += time / total_time * x_size;
-    current_y += 0.5 * x_size * Math.sin(time / total_time * Math.PI);
+    current_y += 0.3 * x_size * Math.sin(time / total_time * Math.PI);
 
     return { x: current_x, y: current_y };
 };
 
 
-var move_right_bounce = function (time, unit_x, unit_y, total_time, x_size, y_size) {
-    return move_right(time, unit_x, unit_y, total_time, x_size, y_size, true);
+var move_right_bounce = function (time, current_x, current_y, total_time, x_size, y_size) {
+    return move_right(time, current_x, current_y, total_time, x_size, y_size, true);
 };
 
-var move_left = function (time, unit_x, unit_y, total_time, x_size, y_size, rebound) {
+var move_left = function (time, current_x, current_y, total_time, x_size, y_size, rebound) {
 
     // default value
     rebound = typeof rebound !== 'undefined' ? rebound : false;
 
     if (rebound && time > total_time / 2.0) {
-        return move_left(total_time - time, unit_x, unit_y, total_time, x_size, y_size, rebound);
+        return move_left(total_time - time, current_x, current_y, total_time, x_size, y_size, rebound);
     }
-    var current_x = unit_x * x_size + 0.5 * x_size;
-    var current_y = unit_y * y_size + 0.5 * y_size;
 
     current_x -= time / total_time * x_size;
-    current_y += 0.5 * y_size * Math.sin(time / total_time * Math.PI);
+    current_y += 0.3 * y_size * Math.sin(time / total_time * Math.PI);
 
     return { x: current_x, y: current_y };
 };
 
-var move_left_bounce = function (time, unit_x, unit_y, total_time, x_size, y_size) {
-    return move_left(time, unit_x, unit_y, total_time, x_size, y_size, true);
+var move_left_bounce = function (time, current_x, current_y, total_time, x_size, y_size) {
+    return move_left(time, current_x, current_y, total_time, x_size, y_size, true);
 };
 
-var move_down = function (time, unit_x, unit_y, total_time, x_size, y_size, rebound) {
+var move_down = function (time, current_x, current_y, total_time, x_size, y_size, rebound) {
     // default value
     rebound = typeof rebound !== 'undefined' ? rebound : false;
 
     if (rebound && time > total_time / 2.0) {
-        return move_down(total_time - time, unit_x, unit_y, total_time, x_size, y_size, rebound);
+        return move_down(total_time - time, current_x, current_y, total_time, x_size, y_size, rebound);
     }
-    var current_x = unit_x * x_size + 0.5 * y_size;
-    var current_y = unit_y * x_size + 0.5 * y_size;
 
     current_y -= time / total_time * y_size;
 
     return { x: current_x, y: current_y };
 };
 
-var move_down_bounce = function (time, unit_x, unit_y, total_time, x_size, y_size) {
-    return move_down(time, unit_x, unit_y, total_time, x_size, y_size, true);
+var move_down_bounce = function (time, current_x, current_y, total_time, x_size, y_size) {
+    return move_down(time, current_x, current_y, total_time, x_size, y_size * 0.6, true);
 };
 
-var move_up = function (time, unit_x, unit_y, total_time, x_size, y_size) {
-    var current_x = unit_x * x_size + 0.5 * x_size;
-    var current_y = unit_y * y_size + 0.5 * y_size;
+var move_down_half = function (time, current_x, current_y, total_time, x_size, y_size) {
+    time = Math.min(time, total_time / 2);
+    return move_down(time, current_x, current_y, total_time, x_size, y_size * 0.6, true);
+};
+
+var move_up = function (time, current_x, current_y, total_time, x_size, y_size) {
 
     current_y += time / total_time * y_size;
 
